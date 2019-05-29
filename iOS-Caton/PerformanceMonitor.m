@@ -7,25 +7,19 @@
 //
 
 #import "PerformanceMonitor.h"
-#include <libkern/OSAtomic.h>
-#include <execinfo.h>
+#import "BSBacktraceLogger.h"
 
 @interface PerformanceMonitor ()
-{
-    int timeoutCount;
-    CFRunLoopObserverRef observer;
-    
-    @public
-    dispatch_semaphore_t semaphore;
-    CFRunLoopActivity activity;
-}
+
+@property (nonatomic, strong) dispatch_semaphore_t semaphore;
+@property (nonatomic, assign) CFRunLoopActivity activity;
+@property (nonatomic, assign) CFRunLoopObserverRef observer;
+@property (nonatomic, assign) int timeoutCount;
+
 @end
 
 @implementation PerformanceMonitor
 
-static int dsemaC = 0;
-static int waitC = 0;
-static int activityC = 0;
 
 
 + (instancetype)sharedInstance
@@ -42,44 +36,43 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActi
 {
     PerformanceMonitor *moniotr = (__bridge PerformanceMonitor*)info;
     
-    moniotr->activity = activity;
+    moniotr.activity = activity;
     
-    dispatch_semaphore_t semaphore = moniotr->semaphore;
+    dispatch_semaphore_t semaphore = moniotr.semaphore;
     ///> 这个函数会使传入的信号量dsema的值加1
     dispatch_semaphore_signal(semaphore);
-    dsemaC++;
-//    NSLog(@"--------------------下一个-------dsemaC-------------");
 }
 
 - (void)stop
 {
-    if (!observer)
+    if (!self.observer)
         return;
     
-    CFRunLoopRemoveObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
-    CFRelease(observer);
-    observer = NULL;
+    CFRunLoopRemoveObserver(CFRunLoopGetMain(), self.observer, kCFRunLoopCommonModes);
+    CFRelease(self.observer);
+    self.observer = NULL;
 }
 
 - (void)start
 {
-    if (observer)
+    if (self.observer)
         return;
     
     // 信号  如果信号量是0，就会根据传入的等待时间来等待
-    semaphore = dispatch_semaphore_create(0);
+    self.semaphore = dispatch_semaphore_create(0);
     
     // 注册RunLoop状态观察
     CFRunLoopObserverContext context = {0,(__bridge void*)self,NULL,NULL};
-    observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
+    self.observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
                                        kCFRunLoopAllActivities,
                                        YES,
                                        0,
                                        &runLoopObserverCallBack,
                                        &context);
-    CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
+    CFRunLoopAddObserver(CFRunLoopGetMain(), self.observer, kCFRunLoopCommonModes);
     
     // 在子线程监控时长
+    __weak typeof(self) weakSelf;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         while (YES)
         {
@@ -87,47 +80,34 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActi
             
             
             ///> 果然是等待 50毫秒才会执行下面的程序  只会等待这么久等待完就过去了
-            long st = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC));
+            long st = dispatch_semaphore_wait(weakSelf.semaphore, dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC));
             
             
             ////>  不等于0 表示 没有增加信号量  连续  还是本次的循环
             if (st != 0)
             {
-                if (!observer)
+                if (!weakSelf.observer)
                 {
-                    timeoutCount = 0;
-                    semaphore = 0;
-                    activity = 0;
+                    weakSelf.timeoutCount = 0;
+                    weakSelf.semaphore = 0;
+                    weakSelf.activity = 0;
                     return;
                 }
                 
-                if (activity==kCFRunLoopBeforeSources || activity==kCFRunLoopAfterWaiting)
+                if (weakSelf.activity==kCFRunLoopBeforeSources || weakSelf.activity==kCFRunLoopAfterWaiting)
                 {
-                    if (++timeoutCount < 5)
+                    if (++weakSelf.timeoutCount < 5)
                         continue;
                     
                     ////> 如何获取f当前的堆栈
-                    
-                    void* callstack[128];
-                    int frames = backtrace(callstack, 128);
-                    char **strs = backtrace_symbols(callstack, frames);
-                    int i;
-                    NSMutableArray *backtrace = [NSMutableArray arrayWithCapacity:frames];
-                    for (i = 0;i < 4;i++){
-                        [backtrace addObject:[NSString stringWithUTF8String:strs[i]]];
-                    }
-                    free(strs);
-                    NSLog(@"=====>>>>>堆栈<<<<<=====\n%@",backtrace);
-                    
+                    BSLOG_MAIN
                     NSLog(@"--------------------卡卡卡卡卡卡卡卡卡-------------");
                 }
                 
             } else {
                 ///> ===0 表示已经释放。表示已经是下一个循环了
-                waitC++;
-//                NSLog(@"--------------------下一个-------waitC-------------");
             }
-            timeoutCount = 0;
+            weakSelf.timeoutCount = 0;
         }
     });
 }

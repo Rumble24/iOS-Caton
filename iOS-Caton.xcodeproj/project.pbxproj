@@ -16,6 +16,7 @@
 		9B00BEFE22978163008DC6E8 /* iOS_CatonTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B00BEFD22978163008DC6E8 /* iOS_CatonTests.m */; };
 		9B00BF0922978163008DC6E8 /* iOS_CatonUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B00BF0822978163008DC6E8 /* iOS_CatonUITests.m */; };
 		9BE765D4229D2AED00754AE6 /* PerformanceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE765D3229D2AED00754AE6 /* PerformanceMonitor.m */; };
+		9BE765DA229E138400754AE6 /* BSBacktraceLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE765D9229E138300754AE6 /* BSBacktraceLogger.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		9B00BF0A22978163008DC6E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9BE765D2229D2AED00754AE6 /* PerformanceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceMonitor.h; sourceTree = "<group>"; };
 		9BE765D3229D2AED00754AE6 /* PerformanceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PerformanceMonitor.m; sourceTree = "<group>"; };
+		9BE765D8229E138300754AE6 /* BSBacktraceLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSBacktraceLogger.h; sourceTree = "<group>"; };
+		9BE765D9229E138300754AE6 /* BSBacktraceLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSBacktraceLogger.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +113,8 @@
 				9B00BEE822978161008DC6E8 /* ViewController.m */,
 				9BE765D2229D2AED00754AE6 /* PerformanceMonitor.h */,
 				9BE765D3229D2AED00754AE6 /* PerformanceMonitor.m */,
+				9BE765D8229E138300754AE6 /* BSBacktraceLogger.h */,
+				9BE765D9229E138300754AE6 /* BSBacktraceLogger.m */,
 				9B00BEEA22978161008DC6E8 /* Main.storyboard */,
 				9B00BEED22978163008DC6E8 /* Assets.xcassets */,
 				9B00BEEF22978163008DC6E8 /* LaunchScreen.storyboard */,
@@ -271,6 +276,7 @@
 				9BE765D4229D2AED00754AE6 /* PerformanceMonitor.m in Sources */,
 				9B00BEF422978163008DC6E8 /* main.m in Sources */,
 				9B00BEE622978161008DC6E8 /* AppDelegate.m in Sources */,
+				9BE765DA229E138400754AE6 /* BSBacktraceLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
