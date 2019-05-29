@@ -8,15 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-#define BSLOG NSLog(@"%@",[BSBacktraceLogger bs_backtraceOfCurrentThread]);
-#define BSLOG_MAIN NSLog(@"%@",[BSBacktraceLogger bs_backtraceOfMainThread]);
-#define BSLOG_ALL NSLog(@"%@",[BSBacktraceLogger bs_backtraceOfAllThread]);
-
 @interface BSBacktraceLogger : NSObject
 
+
+///> 获取所有的线程
 + (NSString *)bs_backtraceOfAllThread;
+
+///> 获取当前线程
 + (NSString *)bs_backtraceOfCurrentThread;
+
+///> 获取主线程
 + (NSString *)bs_backtraceOfMainThread;
+
+///> 获取某一个线程
 + (NSString *)bs_backtraceOfNSThread:(NSThread *)thread;
-void test();
+
 @end

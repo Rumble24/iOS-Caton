@@ -100,7 +100,7 @@ static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActi
                         continue;
                     
                     ////> 如何获取f当前的堆栈
-                    BSLOG_MAIN
+                    [BSBacktraceLogger bs_backtraceOfMainThread];
                     NSLog(@"--------------------卡卡卡卡卡卡卡卡卡-------------");
                 }
                 

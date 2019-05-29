@@ -114,6 +114,7 @@ NSString *_bs_backtraceOfThread(thread_t thread) {
     int i = 0;
     NSMutableString *resultString = [[NSMutableString alloc] initWithFormat:@"Backtrace of Thread %u:\n", thread];
     
+    ///>  _STRUCT_MCONTEXT 类型的结构体中，存储了当前线程的 Stack Pointer 和最顶部栈帧的 Frame Pointer，从而获取到了整个线程的调用栈。
     _STRUCT_MCONTEXT machineContext;
     if(!bs_fillThreadStateIntoMachineContext(thread, &machineContext)) {
         return [NSString stringWithFormat:@"Fail to get information about thread: %u", thread];
@@ -165,6 +166,7 @@ thread_t bs_machThreadFromNSThread(NSThread *nsthread) {
     mach_msg_type_number_t count;
     thread_act_array_t list;
 //    task_threads 将 target_task 任务中的所有线程保存在 act_list 数组中，数组中包含 act_listCnt 个条目。
+    ///> 拿到所有的线程
     task_threads(mach_task_self(), &list, &count);
     
     NSTimeInterval currentTimestamp = [[NSDate date] timeIntervalSince1970];
